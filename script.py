@@ -80,15 +80,14 @@ def create_output_csv(wiki_pages, websites):
     except PermissionError:
         print("Permission error to file!")
 
-try:
-    input_file = sys.argv[1]
-except IndexError:
-    print("Please, specify an input file!")
-    sys.exit()
-
 
 def main():
     """Main entry point for the script."""
+    try:
+        input_file = sys.argv[1]
+    except IndexError:
+        print("Please, specify an input file!")
+        sys.exit()
 
     # Creating a list of companies Wikipedia pages URLs.
     wiki_urls = read_csv_file(input_file)
