@@ -1,7 +1,16 @@
 #!/usr/bin/python
 
+"""
+
+This is the script that, for each Wikipedia URL in input file,
+extracts company website URL from appropriate Wikipedia page
+and exports results to wikipedia_answers.csv.
+
+"""
+
 import sys
 import csv
+import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -32,7 +41,7 @@ def extract_websites(wiki_urls):
     """Extracting urls of companies.
 
     For each input Wikipedia URL,
-    extract company website URL from Wikipedia page.
+    it extracts company website URL from Wikipedia page.
 
     :param wiki_urls: List of Wikipedia URLs
     :return: List of company website URLs
@@ -41,19 +50,20 @@ def extract_websites(wiki_urls):
     companies_websites = []
     company_num = 1
     for wiki_url in wiki_urls:
+        company_title = re.findall(r'[^/]+$', wiki_url)
         try:
             r = requests.get(wiki_url)
             soup = BeautifulSoup(r.text, "html.parser")
             # Finding a company’s url in HTML code.
             website = soup.find('th', string="Website").findNext('td').a['href']
         except:
-            print("\tCompany {}: ERROR".format(company_num))
+            print("\tCompany {0} - {1}: ERROR".format(company_num, company_title[0]))
             companies_websites.append('')
             company_num += 1
             continue
 
         companies_websites.append(website)
-        print("\tCompany {}: OK".format(company_num))
+        print("\tCompany {0} - {1}: OK".format(company_num, company_title[0]))
         company_num += 1
     return companies_websites
 
